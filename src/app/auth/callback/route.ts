@@ -1,6 +1,10 @@
 ﻿import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
+// Esta ruta procesa un codigo de un solo uso en cada visita — nunca
+// debe cachearse ni pre-renderizarse estaticamente.
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   // Detras del proxy de CyberPanel, "origin" es la direccion interna
