@@ -116,7 +116,7 @@ import { useTranslations } from "next-intl";
 export function Sidebar({ open = false, onClose }: SidebarProps) {
   const t = useTranslations("Sidebar");
   const pathname = usePathname();
-  const { profile, profileLoading, account, accountRole, signOut } = useAuth();
+  const { profile, profileLoading, account, accountRole, isOwner, signOut } = useAuth();
   const totalUnread = useTotalUnread();
   const unreadNotifications = useUnreadNotifications();
   // Only surface the account-name strip when it actually carries
@@ -291,6 +291,19 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
               );
             })}
           </ul>
+          {isOwner && (
+            <ul className="mt-2 flex flex-col gap-1 border-t border-border pt-2">
+              <li>
+                <Link
+                  href="/admin/clientes"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:py-2"
+                >
+                  <UsersRound className="h-4 w-4" />
+                  Clientes
+                </Link>
+              </li>
+            </ul>
+          )}
         </nav>
 
         {/* User section */}
