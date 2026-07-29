@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -43,6 +43,22 @@ function LoginPageInner() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
+
+  // Links de invitacion / recuperacion viejos caen en /login con el
+  // token pegado despues del #. supabase-js lo procesa solo y crea
+  // la sesion en segundo plano; si eso pasa, mandamos a poner
+  // contrasena en vez de mostrar el formulario de login normal.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!window.location.hash.includes("access_token")) return;
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "PASSWORD_RECOVERY") {
+        window.location.href = "/reset-password";
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [supabase]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
